@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, jsonify, session
 from pymongo import MongoClient
-from werkzeug.utils import secure_filename # 파일 이름에 사용할 수 없는 특수 문자를 제거하여 안전한 파일 이름을 생성하는 유틸리티 함수
 from bson.objectid import ObjectId
 from datetime import datetime
 import bcrypt
 import os # 파일 경로 처리와 파일 삭제 등을 위한 모듈
+import uuid
 
 app = Flask(__name__)
 
@@ -61,7 +61,7 @@ def edit_post(postid):
 def edit_profile():  
     return render_template('edit_profile.html')
 
-# 회원 수정 페이지로 이동
+# 내 게시글 조회 페이지로 이동
 @app.route('/getMyPosts')
 def getMyPosts():  
     return render_template('view_post.html')
@@ -70,6 +70,7 @@ def getMyPosts():
 @app.route('/sign_up', methods=['POST'])
 def signup():
     # data: { userid: userid, password: password, name: name, email: email } 형식으로 데이터 불러옴
+    # Get 요청은 args로, Post 요청은 form으로, Delete 요청은 json
     userid = request.form['userid']
     password = request.form['password']
     name = request.form['name']
@@ -120,14 +121,15 @@ def uploadPost():
     title = request.form['title']
     content = request.form['content']
     author = session['userid']  # 세션에서 사용자 ID 가져오기
+    likes = 0
 
     filename = None
     isimage = False
     extension = None
 
     if file:
-        # secure_filename(): 특수 문자 제거
-        filename = secure_filename(file.filename)
+        extension = file.filename.rsplit('.', 1)[-1].lower()  # 확장자 추출
+        filename = f"{uuid.uuid4().hex}.{extension}"  # 랜덤한 UUID 파일명 생성
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename) # 경로 지정 ex) ./static/uploads/image.jpg
 
         # 파일 이름이 이미 존재하는지 확인
@@ -149,6 +151,7 @@ def uploadPost():
         'content': content,
         'author': author,
         'isimage': isimage,  # 이미지 여부 추가
+        'likes' : likes,
         'createdat': datetime.now(),
         'updatedat': datetime.now()
     }
@@ -156,6 +159,21 @@ def uploadPost():
 
     return jsonify({'result': 'success', 'msg': '게시글 작성이 완료됐습니다.'}), 200
     
+# 게시글 좋아요
+@app.route('/post/like/<postid>', methods=['POST'])
+def likePost(postid):
+    if 'userid' not in session:
+        return jsonify({'result': 'fail', 'msg': '로그인이 필요합니다.'}), 401
+    post = db.Posts.find_one({'postid': postid})
+    if not post:
+        return jsonify({'result': 'fail', 'msg': '게시글을 찾을 수 없습니다.'}), 400
+
+    updated_likes = post.get('likes', 0) + 1  # 기존 좋아요 값에 1 추가
+
+    db.Posts.update_one({'postid': postid}, {'$set': {'likes': updated_likes}})
+
+    return jsonify({'result': 'success', 'likes': updated_likes}), 200
+
 # 모든 게시글 목록 조회
 @app.route('/posts', methods=['GET'])
 def get_posts():
@@ -182,7 +200,7 @@ def get_post(postid):
         "msg": "게시글과 댓글을 성공적으로 조회했습니다.",
         "data": {
             "post": post,
-            "comments": comments            
+            "comments": comments     
         }
     }
 
@@ -217,12 +235,16 @@ def add_comment(postid):
     if 'userid' not in session:
         return jsonify({'result': 'fail', 'msg': '로그인이 필요합니다.'}), 401
     
+    userid = session['userid']
+    
     content = request.form.get("content")
 
     # 댓글 데이터 생성
     comment = {
+        'commentid': str(ObjectId()),
         "postid": postid,
-        "content": content
+        "content": content,
+        "author" : userid
     }
 
     # MongoDB에 댓글 저장
@@ -314,6 +336,34 @@ def delete_post(postid):
 
     return jsonify({'result': 'success', 'msg': '게시글과 댓글이 삭제되었습니다.'}), 200
 
+# 댓글 삭제
+@app.route('/deleteComment', methods=['DELETE'])
+def delete_comment():
+    if 'userid' not in session:
+        return jsonify({'result': 'fail', 'msg': '로그인이 필요합니다.'}), 401
+    
+    # contentType: "application/json", 요청할 때 contentType 사용
+    # data: JSON.stringify({ commentid: commentid }),
+    data = request.get_json()
+    commentid = data.get("commentid")
+
+    # 댓글 찾기
+    comment = db.Comments.find_one({"commentid": commentid})
+    print(comment)
+    if not comment:
+        return jsonify({'result': 'fail', 'msg': '댓글을 찾을 수 없습니다.'}), 400
+
+    # 댓글 작성자와 로그인한 사용자가 일치하는지 확인
+    userid = session['userid']
+    print(userid)
+    if comment.get("author") != userid:
+        return jsonify({"result": "fail", "msg": "작성자만 삭제할 수 있습니다."}), 403
+
+    # 댓글 삭제
+    db.Comments.delete_one({"commentid": commentid})
+
+    return jsonify({'result': 'success', 'msg': '댓글이 삭제되었습니다.'}), 200
+
 # 게시글 수정
 @app.route('/post/<postid>', methods=['PUT'])
 def update_post(postid):
@@ -359,7 +409,8 @@ def update_post(postid):
 
     # 파일 업로드 처리
     if file:
-        filename = secure_filename(file.filename)
+        extension = file.filename.rsplit('.', 1)[-1].lower()  # 확장자 추출
+        filename = f"{uuid.uuid4().hex}.{extension}"  # 랜덤한 UUID 파일명 생성
         file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
         # 파일 이름이 중복되면 처리
@@ -438,7 +489,7 @@ def editPassword():
     db.Users.update_one({"userid": userid}, {"$set": {"password": hashed_pw}})
     return jsonify({"result": "success", "msg": "비밀번호가 바뀌었습니다."}), 200
 
-# 내 게시물 조회
+# 내 게시글 조회
 @app.route('/myposts', methods=['GET'])
 def get_my_posts():
     if 'userid' not in session:  # 로그인 확인
@@ -448,6 +499,32 @@ def get_my_posts():
     user_posts = list(db.Posts.find({"author": userid}, {'_id': 0}))  # 해당 사용자의 게시글만 조회
 
     return jsonify({"result": "success", "posts": user_posts}), 200
+
+# 게시글 검색
+@app.route('/keywordPosts', methods=['GET'])
+def get_keyword_posts():
+    if 'userid' not in session:  # 로그인 확인
+        return jsonify({'result': 'fail', 'msg': '로그인이 필요합니다.'}), 401
+
+    keyword = request.args.get("inputKeyword")
+    # 제목(title)에 키워드가 포함된 게시글 검색 (대소문자 구분 없이)
+    posts = list(db.Posts.find(
+        {"title": {"$regex": keyword, "$options": "i"}},
+        {'_id': 0}
+    ))
+
+    return jsonify({"result": "success", "posts": posts, "keyword" : keyword}), 200
+
+# 게시글 좋아요 순으로 검색
+@app.route('/likesPosts', methods=['GET'])
+def get_likes_posts():
+    if 'userid' not in session:  # 로그인 확인
+        return jsonify({'result': 'fail', 'msg': '로그인이 필요합니다.'}), 401
+
+    # 좋아요 순으로 정렬
+    posts = list(db.Posts.find({}, {'_id': 0}).sort("likes", -1))
+
+    return jsonify({"result": "success", "posts": posts}), 200
 
 if __name__ == '__main__':
     app.run('0.0.0.0',port=5000, debug=True)

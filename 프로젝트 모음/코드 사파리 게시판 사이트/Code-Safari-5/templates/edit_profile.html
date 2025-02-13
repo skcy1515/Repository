@@ -11,9 +11,32 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
+      @font-face {
+        font-family: "S-CoreDream-4";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff")
+          format("woff");
+        font-weight: 400;
+      }
+
+      @font-face {
+        font-family: "S-CoreDream-6";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-6Bold.woff")
+          format("woff");
+        font-weight: 600;
+      }
+      html,
       body {
-        background-color: #f4f4f4;
-        padding: 20px;
+        height: 100%; /* 화면 전체 높이 적용 */
+        margin: 0; /* 여백 제거 */
+        padding: 0; /* 패딩 제거 */
+      }
+      body {
+        font-family: "S-CoreDream-6";
+        background-image: url('{{ url_for("static", filename="mypage,edit.png") }}');
+        background-size: cover; /* 배경 이미지를 화면에 맞게 확대/축소 */
+        background-position: center; /* 배경 이미지 중앙 정렬 */
+        background-repeat: no-repeat; /* 배경 반복 제거 */
+        background-attachment: fixed; /* 배경 이미지 고정 */
       }
       .home-icon {
         position: absolute;
@@ -21,13 +44,13 @@
         right: 20px;
         width: 50px;
         height: 50px;
-        border: 2px solid black;
+        border: 1px solid white;
         text-align: center;
         line-height: 50px;
         cursor: pointer;
         font-weight: bold;
         border-radius: 5px;
-        font-size: 24px;
+        font-size: 35px;
       }
       .home-icon2 {
         position: absolute;
@@ -35,13 +58,13 @@
         right: 80px;
         width: 50px;
         height: 50px;
-        border: 2px solid black;
+        border: 1px solid white;
         text-align: center;
         line-height: 50px;
         cursor: pointer;
         font-weight: bold;
         border-radius: 5px;
-        font-size: 24px;
+        font-size: 35px;
       }
       .profile-container {
         display: flex;
@@ -56,7 +79,7 @@
       }
       .card {
         width: 100%;
-        max-width: 1300px;
+        max-width: 1000px;
         margin: 40px auto;
         padding: 60px;
         display: flex;
@@ -67,10 +90,12 @@
 
       .page-title {
         text-align: center;
-        font-size: 2.5rem;
+        font-size: 3rem;
         margin-bottom: 20px;
         font-weight: bold;
         margin-top: 80px;
+        font-family: "S-CoreDream-6", sans-serif;
+        color: #74d283;
       }
       .profile-info p {
         font-size: 1.5rem;
@@ -82,6 +107,9 @@
       .btn-danger {
         font-size: 1.25rem;
         padding: 15px 30px;
+      }
+      .user-name .user-id {
+        font-family: "S-CoreDream-3", sans-serif;
       }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -189,7 +217,7 @@
     </script>
   </head>
   <body>
-    <div class="home-icon2" onclick="window.location.href='/mypage'">👤</div>
+    <div class="home-icon2" onclick="window.location.href='/mypage'">📜</div>
     <div class="home-icon" onclick="window.location.href='/'">🏠</div>
     <div class="page-title">회원정보 수정</div>
     <div class="card">
@@ -207,42 +235,63 @@
       <div
         class="mt-auto d-flex flex-column justify-content-center align-items-center gap-3"
       >
-        <label for="passwordNow">현재 비밀번호</label>
-        <input
-          type="password"
-          id="passwordNow"
-          name="passwordNow"
-          autocomplete="off"
-          class="form-control"
-        />
-        <button
-          type="submit"
-          id="confirm_pw"
-          class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-          onclick="confirmPw()"
+        <label for="passwordNow" class="fw-medium text-dark"
+          >현재 비밀번호</label
         >
-          비밀번호 확인
-        </button>
-        <label for="newPW">새 비밀번호</label>
+
+        <div class="d-flex align-items-center gap-2 w-75 w-md-50 w-lg-25">
+          <input
+            type="password"
+            id="passwordNow"
+            name="passwordNow"
+            autocomplete="off"
+            class="form-control flex-grow-1"
+            placeholder="현재 비밀번호"
+          />
+          <button
+            type="submit"
+            id="change_pw"
+            class="text-white px-4 py-2 rounded border-0 w-md-50 w-lg-25"
+            style="background-color: rgb(116, 205, 137); white-space: nowrap"
+            onmouseover="this.style.backgroundColor='rgb(101, 175, 118)';"
+            onmouseout="this.style.backgroundColor='rgb(116,205,137)';"
+            onclick="confirmPw()"
+          >
+            비밀번호 확인
+          </button>
+        </div>
+
+        <div class="mt-2"></div>
+
+        <label for="newPW" class="fw-medium text-dark">새 비밀번호</label>
         <input
           type="password"
           id="newPW"
           name="newPW"
-          class="form-control"
-          autocomplete="off"
+          autocomplete="new-password"
+          class="form-control w-75 w-md-50 w-lg-25"
+          placeholder="새 비밀번호"
         />
-        <label for="confirmNewPW">새 비밀번호 확인</label>
+
+        <label for="confirmNewPW" class="fw-medium text-dark"
+          >새 비밀번호 확인</label
+        >
         <input
           type="password"
           id="confirmNewPW"
           name="confirmNewPW"
-          autocomplete="off"
-          class="form-control"
+          autocomplete="new-password"
+          class="form-control w-75 w-md-50 w-lg-25"
+          placeholder="새 비밀번호 확인"
         />
+
         <button
           type="submit"
           id="change_pw"
-          class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          class="text-white px-4 py-2 rounded-lg border-0"
+          style="background-color: rgb(116, 205, 137)"
+          onmouseover="this.style.backgroundColor='rgb(101, 175, 118)';"
+          onmouseout="this.style.backgroundColor='rgb(116,205,137)';"
           onclick="checkForm(event)"
         >
           비밀번호 변경

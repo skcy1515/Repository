@@ -10,9 +10,49 @@
       rel="stylesheet"
     />
     <style>
+      @font-face {
+        font-family: "S-CoreDream-4";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff")
+          format("woff");
+        font-weight: 400;
+      }
+
+      @font-face {
+        font-family: "S-CoreDream-5";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-5Medium.woff")
+          format("woff");
+        font-weight: 500;
+      }
+
+      @font-face {
+        font-family: "S-CoreDream-6";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-6Bold.woff")
+          format("woff");
+        font-weight: 600;
+      }
+
+      @font-face {
+        font-family: "S-CoreDream-8";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-8Heavy.woff")
+          format("woff");
+        font-weight: 800;
+      }
+      html,
       body {
-        background-color: #f4f4f4;
-        padding: 20px;
+        height: 100%; /* 화면 전체 높이 적용 */
+        margin: 0; /* 여백 제거 */
+        padding: 0; /* 패딩 제거 */
+      }
+      .custom-font {
+        font-family: "S-CoreDream-6";
+      }
+      body {
+        font-family: "S-CoreDream-5";
+        background-image: url('{{ url_for("static", filename="post.png") }}');
+        background-size: cover; /* 배경 이미지를 화면에 맞게 확대/축소 */
+        background-position: center; /* 배경 이미지 중앙 정렬 */
+        background-repeat: no-repeat; /* 배경 반복 제거 */
+        background-attachment: fixed; /* 배경 이미지 고정 */
       }
       .home-icon {
         position: absolute;
@@ -20,13 +60,13 @@
         right: 20px;
         width: 50px;
         height: 50px;
-        border: 2px solid black;
+        border: 1px solid white;
         text-align: center;
         line-height: 50px;
         cursor: pointer;
         font-weight: bold;
         border-radius: 5px;
-        font-size: 24px;
+        font-size: 35px;
       }
       .home-icon2 {
         position: absolute;
@@ -34,19 +74,22 @@
         right: 80px;
         width: 50px;
         height: 50px;
-        border: 2px solid black;
+        border: 1px solid white;
         text-align: center;
         line-height: 50px;
         cursor: pointer;
         font-weight: bold;
         border-radius: 5px;
-        font-size: 24px;
+        font-size: 35px;
       }
       .post-title {
-        font-size: 32px;
+        padding-bottom: 20px;
+        font-size: 57px;
         font-weight: bold;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         margin-top: 60px;
+        font-family: "S-CoreDream-8";
+        color: #74d283;
       }
       .comment-container {
         margin-top: 30px;
@@ -76,20 +119,50 @@
       .btn {
         white-space: nowrap;
       }
+      .btn-primary {
+        background-color: #72cd89 !important;
+        border-color: #72cd89 !important;
+      }
+      .btn-primary:hover {
+        background-color: #63b474 !important; /* 마우스 올렸을 때 색상 */
+        border-color: #63b474 !important;
+      }
+      .comment-item {
+        display: flex;
+        justify-content: space-between; /* 텍스트 왼쪽, 버튼 오른쪽 정렬 */
+        align-items: center; /* 버튼을 세로 중앙 정렬 */
+      }
+      .comment-item button {
+        margin-left: 10px;
+        white-space: nowrap; /* 자동 줄바꿈 방지 */
+      }
+      .post-image {
+        width: 100%; /* 본문 크기에 맞춤 */
+        max-height: 500px; /* 너무 커지지 않도록 제한 */
+        object-fit: contain; /* 원본 비율 유지 */
+        display: block;
+        margin: 0 auto; /* 중앙 정렬 */
+      }
+      #postContent {
+        margin-top: 20px;
+        word-wrap: break-word; /* 긴 단어 자동 줄바꿈 */
+        word-break: break-word; /* 박스를 넘지 않도록 강제 줄바꿈 */
+        white-space: normal; /* 줄 바꿈 허용 */
+      }
     </style>
   </head>
   <body>
     <!-- 홈 버튼 -->
-    <div class="home-icon2" onclick="window.location.href='/mypage'">👤</div>
+    <div class="home-icon2" onclick="window.location.href='/mypage'">📜</div>
     <div class="home-icon" onclick="window.location.href='/'">🏠</div>
     <!--메인페이지 파일로 수정해야 함-->
 
-    <h2 class="post-title text-center">게시글</h2>
+    <h1 class="post-title text-center">게시글</h1>
     <section class="container bg-white p-4 rounded border shadow">
       <div
         class="post-header d-flex justify-content-between align-items-center"
       >
-        <h1 id="postTitle">게시글 제목</h1>
+        <h2 id="postTitle" class="custom-font">게시글 제목</h2>
         <!-- 제목 삽입 -->
       </div>
       <hr />
@@ -99,6 +172,9 @@
         <!-- 게시글 내용 삽입 -->
       </article>
       <footer class="button-group d-flex justify-content-end gap-2 mt-4">
+        <button id="likeButton" class="btn btn-primary" onclick="likePost()">
+          좋아요 ❤️ (<span id="likeCount">0</span>)
+        </button>
         <button class="btn btn-dark" onclick="redirectToEdit()">수정</button>
         <!-- 게시글 수정 페이지로 이동 -->
         <button class="btn btn-danger" onclick="deletePost()">삭제</button>
@@ -116,6 +192,7 @@
             class="form-control comment-input"
             placeholder="댓글 입력"
             autocomplete="off"
+            maxlength="1000"
           />
           <button class="btn btn-primary" onclick="addComment()">작성</button>
         </div>
@@ -135,6 +212,37 @@
         window.location.href = `/post/edit/${postid}`;
       }
 
+      // 좋아요 증가
+      function likePost() {
+        let lastLiked = localStorage.getItem(`liked_${postid}`);
+        let today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD 포맷
+
+        if (lastLiked === today) {
+          alert("하루에 한 번만 좋아요를 누를 수 있습니다.");
+          return;
+        }
+
+        $.ajax({
+          url: `/post/like/${postid}`,
+          type: "POST",
+          success: function (response) {
+            if (response.result === "success") {
+              $("#likeCount").text(response.likes); // 좋아요 개수 업데이트
+              localStorage.setItem(`liked_${postid}`, today); // 로컬 스토리지에 기록
+            }
+          },
+          error: function (xhr) {
+            if (xhr.status === 401) {
+              alert(xhr.responseJSON.msg);
+              window.location.href = "/login";
+            } else if (xhr.status === 400) {
+              alert(xhr.responseJSON.msg);
+              window.location.href = "/";
+            }
+          },
+        });
+      }
+
       // 특정 게시글 조회
       function loadPost() {
         $.ajax({
@@ -148,6 +256,7 @@
               // 게시글 정보 삽입
               $("#postTitle").text(post.title);
               $("#postContent").text(post.content);
+              $("#likeCount").text(post.likes);
 
               // 파일이 있을 경우 처리
               if (post.file) {
@@ -158,7 +267,7 @@
 
                 if (post.isimage) {
                   // 이미지 파일이면 <img> 태그로 표시
-                  let imgElement = `<img src="${post.file}" alt="첨부 이미지" class="w-full max-w-md rounded-lg shadow-md">`;
+                  let imgElement = `<img src="${post.file}" alt="첨부 이미지" class="post-image rounded-lg shadow-md">`;
                   fileContainer.append(imgElement);
                 } else {
                   // 이미지가 아니면 다운로드 버튼 추가
@@ -175,7 +284,7 @@
               $("#commentList").empty();
               // 개별 댓글 데이터 확인
               comments.forEach((comment) => {
-                addCommentToList(comment.content);
+                addCommentToList(comment.content, comment.commentid);
               });
             }
           },
@@ -211,6 +320,7 @@
               alert(response.msg);
               addCommentToList(response.content);
               $("#commentInput").val(""); // 입력창 초기화
+              window.location.href = `/post/${postid}`;
             }
           },
           error: function (xhr) {
@@ -223,10 +333,13 @@
       }
 
       // 댓글 HTML 추가
-      function addCommentToList(content) {
+      function addCommentToList(content, commentid) {
         let commentHTML = `
-                <li class="p-2 border-bottom">
-                    <strong>익명</strong>: ${content}
+                <li class="p-2 border-bottom comment-item" data-comment-id="${commentid}">
+                  <span><strong>익명</strong>: ${content}</span>
+                  <button onclick="deleteComment('${commentid}')" class="btn btn-danger">
+                  삭제
+                  </button>
                 </li>
             `;
         $("#commentList").append(commentHTML);
@@ -257,6 +370,41 @@
                 // 작성자와 사용자가 다를 때
                 alert(xhr.responseJSON.msg);
                 window.location.href = `/post/${postid}`;
+              }
+            },
+          });
+        }
+      }
+
+      // 댓글 삭제
+      function deleteComment(commentid) {
+        // 현재 페이지 URL에서 postid 추출
+        let postid = window.location.pathname.split("/")[2]; // URL이 "/post/123"일 경우, postid = "123"
+        if (confirm("댓글을 삭제하시겠습니까?")) {
+          $.ajax({
+            url: "/deleteComment",
+            contentType: "application/json", // JSON 요청 설정
+            data: JSON.stringify({ commentid: commentid }), // 요청 본문(Body)에 JSON 데이터 전송
+            type: "DELETE",
+            success: function (response) {
+              if (response.result === "success") {
+                alert(response.msg);
+                window.location.href = `/post/${postid}`;
+              }
+            },
+            error: function (xhr) {
+              if (xhr.status === 401) {
+                // 로그인 안 했을 때
+                alert(xhr.responseJSON.msg);
+                window.location.href = "/login";
+              } else if (xhr.status === 400) {
+                // 댓글이 없을 때
+                alert(xhr.responseJSON.msg);
+                window.location.href = `/post/${postid}`;
+              } else if (xhr.status === 403) {
+                // 작성자와 사용자가 다를 때
+                alert(xhr.responseJSON.msg);
+                return;
               }
             },
           });

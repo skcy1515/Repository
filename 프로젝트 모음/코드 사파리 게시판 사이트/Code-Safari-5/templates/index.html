@@ -10,24 +10,54 @@
     <style>
       html,
       body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
+        height: 100%; /* 화면 전체 높이 적용 */
+        margin: 0; /* 여백 제거 */
+        padding: 0; /* 패딩 제거 */
+      }
+      body {
+        font-family: "S-CoreDream-Medium", sans-serif;
+        background-image: url('{{ url_for("static", filename="my_view,index.png") }}');
+        background-size: cover; /* 배경 이미지를 화면에 맞게 확대/축소 */
+        background-position: center; /* 배경 이미지 중앙 정렬 */
+        background-repeat: no-repeat; /* 배경 반복 제거 */
+        background-attachment: fixed; /* 배경 이미지 고정 */
       }
       /* 게시글 내부에서 스크롤 가능하도록 설정 */
       .section {
         width: 100%;
-        height: 100vh; /* 화면 전체 높이 */
-        overflow-y: auto; /* 스크롤 가능하게 설정 */
         padding: 24px;
+      }
+
+      .card-item {
+        display: flex;
+        flex-direction: column; /* 세로 정렬 */
+        justify-content: space-between; /* 카드 내부 균형 유지 */
+        height: 100%; /* 부모 크기 맞추기 */
+      }
+
+      .card-content {
+        flex-grow: 1; /* 내용이 많아도 균일한 크기 유지 */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; 
+        align-items: flex-start; 
       }
 
       /* 6줄까지 표시되도록 설정 */
       .text-preview {
-        display: -webkit-box;
-        -webkit-line-clamp: 6;
-        -webkit-box-orient: vertical;
+        display: block;
         overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4em; /* 줄 간격 */
+        max-height: calc(1.4em * 3 + 0.2em); /* 최대 6줄까지 표시 */
+        word-break: break-word; /* 긴 단어 자동 줄바꿈 */
+      }
+      .title-preview{
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4em; /* 줄 간격 */
+        max-height: calc(1.4em * 1); /* 최대 6줄까지 표시 */
       }
       .mypage_location {
         position: absolute;
@@ -39,60 +69,95 @@
         top: 75px;
         right: 10px;
       }
+      * {
+        color: #72cd89;
+      }
+      @font-face {
+        font-family: "S-CoreDream-Bold2";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-7ExtraBold.woff")
+          format("woff");
+        font-weight: 700;
+        font-style: Bold;
+      }
+      @font-face {
+        font-family: "S-CoreDream-Bold";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-6Bold.woff")
+          format("woff");
+        font-weight: 600;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "S-CoreDream-Medium";
+        src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-5Medium.woff")
+          format("woff");
+        font-weight: 500;
+        font-style: normal;
+      }
     </style>
   </head>
 
-  <body class="bg-gray-100">
-    <header class="bg-white shadow-md p-4 flex flex-col items-center">
-      <div class="flex justify-between items-center w-full p-4">
-        <h1 class="text-4xl font-bold text-gray-800 text-center flex-1">
-          세렝게티 게시판
-        </h1>
+  <body class="bg-black">
+    <header class="shadow-md p-4 flex flex-col items-center">
+      <div class="absolute top-4 right-4 py-1">
         <button
           id="logOutBtn"
-          class="hover:text-red-500 active:text-red-700 duration-300 ease-in-out text-black px-4 py-2 font-bold"
+          class="hover:text-red-500 active:text-red-700 duration-300 ease-in-out text-white px-4 py-2 font-bold text-lg"
           onclick="logout();"
         >
           로그아웃
         </button>
       </div>
 
-      <div>
+      <div class="w-full flex justify-center">
+        <h1 class="pt-8 text-5xl font-bold main_color" style="font-family: 'S-CoreDream-Bold2', sans-serif;">코드사파리 게시판</h1>
+      </div>
+
+      <div class="py-4">
         <button
           id="myPageBtn"
-          class="hover:text-blue-500 active:text-blue-700 duration-300 ease-in-out w-full sm:w-auto text-center text-black px-4 py-2 font-bold 700 text-center"
+          class="hover:text-[#72CD89] active:text-[#3A8A58] duration-300 ease-in-out w-full sm:w-auto text-center text-white px-4 py-2 font-bold text-center text-xl"
         >
           마이페이지
         </button>
         <button
           id="addCardBtn"
-          class="hover:text-blue-500 active:text-blue-700 duration-300 ease-in-out w-full sm:w-auto text-center text-black px-4 py-2 font-bold 700 text-center"
+          class="hover:text-[#72CD89] active:text-[#3A8A58] duration-300 ease-in-out w-full sm:w-auto text-center text-white px-4 py-2 font-bold text-center text-xl"
         >
           게시글 작성
         </button>
       </div>
 
       <div class="searching flex items-center space-x-2 mt-4">
-        <label for="searching" class="font-bold">검색하기</label>
+      <div
+        class="searching flex items-center justify-center space-x-2 mt-4 border-b-[1.3px] border-[#707070] pb-2 w-full"
+      >
+        <label for="searching" class="font-bold text-xl">검색하기</label>
         <input
           id="searching"
           type="text"
           name="searching"
+          class="border border-black p-1 rounded pos w-full sm:w-72 md:w-96 lg:w-[500px] text-black"
           autocomplete="off"
-          class="border border-black p-1 rounded pos w-full sm:w-72 md:w-96 lg:w-[500px]"
         />
         <button
           id="searchBtn"
-          class="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400"
+          class="bg-[#72CD89] px-3 py-1 rounded hover:bg-[#5DBA76] active:bg-[#4CA969] font-bold text-white"
+          onclick="searchKeyword()"
         >
           검색
+          <button
+          id="likes"
+          class="px-4 py-1 hover:text-[#72CD89] active:text-[#3A8A58] duration-300 ease-in-out w-full sm:w-auto text-center text-white px-4 py-2 font-bold text-center text-xl"
+          onclick="searchLikes()"
+        >
+          ❤️ 정렬
         </button>
       </div>
     </header>
 
     <section class="section">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-bold">게시글 목록</h2>
+        <h2 class="text-2xl font-bold text-3xl">게시글 목록</h2>
       </div>
 
       <!-- 카드 컨테이너 -->
@@ -100,11 +165,6 @@
         id="cardsContainer"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       ></div>
-
-      <!-- 로딩 스피너 -->
-      <div id="loading" class="text-center hidden mt-4">
-        <span class="text-gray-500">더 불러오는 중...</span>
-      </div>
     </section>
 
     <script>
@@ -158,7 +218,8 @@
                   post.title,
                   post.content,
                   post.postid,
-                  post.isimage
+                  post.isimage,
+                  post.likes
                 );
               });
             }
@@ -166,10 +227,6 @@
         });
       }
 
-      let articles = [];
-      let currentIndex = 0;
-      const loadCount = 9;
-      let isFetching = false;
       // 마이페이지로 이동
       $(document).ready(function () {
         $("#myPageBtn").click(function () {
@@ -182,62 +239,94 @@
         $("#addCardBtn").click(function () {
           window.location.href = "/post_write";
         });
-
-        loadMoreArticles();
-
-        /* 게시판 내부에서 스크롤 시 추가 로드 */
-        $(".section").on("scroll", function () {
-          let scrollTop = $(".section").scrollTop();
-          let sectionHeight = $(".section").innerHeight();
-          let documentHeight = $("#cardsContainer").outerHeight();
-
-          if (scrollTop + sectionHeight >= documentHeight - 100) {
-            if (!isFetching) {
-              isFetching = true;
-              $("#loading").show();
-              setTimeout(() => {
-                loadMoreArticles();
-                $("#loading").hide();
-                isFetching = false;
-              }, 1000);
-            }
-          }
-        });
       });
 
-      function loadMoreArticles() {
-        let newArticles = articles.slice(
-          currentIndex,
-          currentIndex + loadCount
-        );
-        newArticles.forEach((article) => {
-          addCard(post.image, post.title, post.content);
-        });
-        currentIndex += loadCount;
-
-        if (currentIndex >= articles.length) {
-          $("#loading").hide();
-          $(".section").off("scroll"); // 스크롤 이벤트 제거 (추가 요청 방지)
-        }
-      }
-
-      function addCard(file, title, content, postid, isimage) {
+      function addCard(file, title, content, postid, isimage, likes) {
         let postUrl = `/post/${postid}`;
 
         let cardHTML = `
           <div class="card-item bg-white shadow-md rounded-lg overflow-hidden w-full max-w-[700px]">
               ${
                 file && isimage
-                  ? `<img src="${file}" alt="Card Image" class="w-full h-48 object-cover">`
+                  ? `<div class="w-full h-48 overflow-hidden">
+                        <img src="${file}" alt="Card Image" class="w-full h-full object-cover">
+                    </div>`
                   : ""
               }
-              <div class="p-4">
-                  <a href="${postUrl}" class="card-title text-lg font-bold text-blue-500 hover:underline">${title}</a>
-                  <p class="text-gray-700 mt-2 text-preview">${content}</p>
-              </div>
+            <div class="p-4">
+                <div class="flex items-center justify-between">  
+                    <a href="${postUrl}" class="card-title text-xl font-bold text-blue-500 hover:underline title-preview">${title}</a>
+                      <div class="flex items-center space-x-1"> 
+                        <span class="text-gray-600 text-sm">❤️</span>
+                        <span class="text-gray-600 text-sm">${likes}</span>
+                    </div>
+                </div>
+                <p class="text-gray-700 text-lg mt-2 text-preview">${content}</p>  
+            </div>
           </div>
-          `;
+        `;
+
         $("#cardsContainer").append(cardHTML);
+      }
+
+      // 게시글 검색
+      function searchKeyword() {
+        let keyword = $("#searching").val().trim();
+        if (keyword === "") {
+          loadPosts(); // 공백 입력 시 전체 게시글 로드 
+          return;
+        }
+        $.ajax({
+            url: "/keywordPosts",
+            type: "GET",
+            data: { inputKeyword: keyword },
+            dataType: "json",
+            success: function (response) {
+              $("#cardsContainer").empty(); // 기존 목록 초기화
+              if (response.result === "success") {
+                if (response.posts.length === 0) {
+                    $("#cardsContainer").append("<p class='text-gray-100 text-xl'>검색 결과가 없습니다.</p>");
+                } else {
+                    response.posts.forEach((post) => {
+                        addCard(post.file, post.title, post.content, post.postid, post.isimage, post.likes);
+                    });
+                }
+            }
+        },
+        error: function (xhr) {
+          if (xhr.status === 401) {
+              alert(xhr.responseJSON.msg);
+              window.location.href = "/login";
+            }
+        }
+        });
+      }
+
+      // 게시글 좋아요 순으로 검색
+      function searchLikes() {
+        $.ajax({
+            url: "/likesPosts",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+              $("#cardsContainer").empty(); // 기존 목록 초기화
+              if (response.result === "success") {
+                if (response.posts.length === 0) {
+                    $("#cardsContainer").append("<p class='text-gray-100 text-xl'>검색 결과가 없습니다.</p>");
+                } else {
+                  response.posts.forEach((post) => {
+                        addCard(post.file, post.title, post.content, post.postid, post.isimage, post.likes);
+                    });
+                }
+            }
+        },
+        error: function (xhr) {
+          if (xhr.status === 401) {
+              alert(xhr.responseJSON.msg);
+              window.location.href = "/login";
+            }
+        }
+        });
       }
     </script>
   </body>
