@@ -26,6 +26,7 @@ EC2 검색해서 인스턴스 시작 누르기
 ![image](https://github.com/user-attachments/assets/81eb13a1-65ed-4719-ab7a-3cc7273003c2)
 - SSH: 다른 컴퓨터에 접속할 때 쓰는 프로그램이며, 서로 22번 포트가 열려있어야 접속 가능
 - git bash를 통해 명령어 실행
+- MongoDB:27017추가, 파이썬: 5000 추가, 스프링부트:8080 추가
 ```
 ssh -i 받은키페어를끌어다놓기 ubuntu@AWS에적힌내아이피
 ```
