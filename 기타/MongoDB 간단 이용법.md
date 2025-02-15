@@ -19,6 +19,16 @@ https://cloud.mongodb.com/v2#/org/67a2eb864bd38a79b8d2bf48/projects
 
 4. Network Access를 눌러줌. MongoDB Atlas를 어디서든 연결할 수 있게 함. ADD IP ADDRESS를 누르고, ALLOW ACCESS FROM ANYWHERE를 선택
 
+# 스프링부트로 사용
+```
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://<아이디>:<비밀번호>@cluster0.<unique>.mongodb.net/<데이터베이스이름>?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true
+```
+resources 폴더 안에 application.yml 파일을 생성해주고 코드 붙여넣기
+
+
 # pymongo 사용
 ![image](https://github.com/user-attachments/assets/9c26f138-d735-4188-a0e3-6f74943a26cd)
 
@@ -31,7 +41,7 @@ https://cloud.mongodb.com/v2#/org/67a2eb864bd38a79b8d2bf48/projects
 - 예시 uri
 ```
 # 아이디, unique는 uri를 복사하실 때 같이 복사됨. 비밀번호만 바꿔서 저장
-uri = "mongodb+srv://<아이디>:<비밀번호>@cluster0.<unique>.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true"
+uri = "mongodb+srv://<아이디>:<비밀번호>@cluster0.<unique>.mongodb.net/<데이터베이스이름>?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true"
 ```
 
 ```
@@ -43,7 +53,7 @@ pip install pymongo
 # pymongo를 임포트 하기
 from pymongo import MongoClient
 # 아래 uri를 복사해둔 uri로 수정하기
-uri = "mongodb+srv://<아이디>:<비밀번호>@cluster0.<unique>.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true"
+uri = "mongodb+srv://<아이디>:<비밀번호>@cluster0.<unique>.mongodb.net/<데이터베이스이름>?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true"
 client = MongoClient(uri, 27017)  # MongoDB는 27017 포트로 돌아감
 db = client.dbjungle    # 'dbjungle'라는 이름의 db를 만듦
 # 코딩 시작
