@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8"/>
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- 이 부분은 절대 지우지 마세요. -->
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+            integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+            crossorigin="anonymous"
+    />
+    <!-- 이 부분은 절대 지우지 마세요. -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Stylish&display=swap"
+            rel="stylesheet"
+    />
+    <title>Title</title>
+</head>
+<body>
+
+<div class="container">
+    <form action="/postUpload" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="title">제목</label>
+            <input type="text" class="form-control" id="title" placeholder="제목을 입력하세요">
+        </div>
+        <div class="form-group">
+            <label for="post-file">이미지를 업로드해주세요</label>
+            <input
+                    id="post-file"
+                    type="file"
+                    class="form-control"
+                    name="files"
+                    multiple
+            />
+            <div id="file-list"></div> <!-- 선택된 파일 목록 표시 -->
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">내용</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="4"></textarea>
+        </div>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/postWrite.js"></script>
+</body>
+</html>
