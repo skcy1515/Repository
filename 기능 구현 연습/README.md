@@ -36,6 +36,22 @@ spring:
 ```
 - `application.yml` : MongoDB 기본 설정 파일
 
+```
+file.upload-dir=default
+spring.profiles.active=dev
+
+spring.servlet.multipart.max-file-size=50MB
+spring.servlet.multipart.max-request-size=50MB
+```
+- `application.properties`: 업로드 경로 지정 (dev: 윈도우, prod: 리눅스), 파일 업로드 최대 용량 설정
+
+```
+file.upload-dir=C:/Users/skcy1/OneDrive/Desktop/uploads
+file.upload-dir=/home/ubuntu/Tests/uploads/
+```
+- `application-dev.properties`, `application-prod.properties`: 윈도우, 리눅스 경로 설정
+
+
 # 구현한 기능들
 ## 이미지 방명록
 ![image](https://github.com/user-attachments/assets/8dbb2b04-12bd-40fc-9ee7-a1ba54ac13b7)
