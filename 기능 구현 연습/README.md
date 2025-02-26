@@ -7,6 +7,35 @@
 - 제이쿼리
 - 부트스트랩
 
+# 기본 설정
+```
+// 업로드된 파일을 정적 리소스로 제공
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+/*    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/uploads/**") // 브라우저에서 /uploads/파일명 요청을 처리하도록 설정
+                .addResourceLocations("file:/home/ubuntu/Tests/uploads/"); // 실제 파일이 저장된 디렉토리를 매핑
+    }*/
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/uploads/**") // 웹에서 /uploads/로 접근 가능
+                .addResourceLocations("file:C:/Users/skcy1/OneDrive/Desktop/uploads");  // 로컬 폴더와 매핑
+    }
+
+}
+```
+- `WebConfig` : Spring Boot에서 업로드된 파일을 정적 리소스로 제공하기 위한 설정이다. 즉, 웹 브라우저에서 /uploads/파일명 형태의 요청을 보내면, 서버의 특정 디렉토리에 저장된 파일을 제공할 수 있도록 매핑한다.
+
+```
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://<아이디>:<비밀번호>@<클러스터이름>.<유니크>.mongodb.net/<사용할데이터베이스이름>?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true
+```
+- `application.yml` : MongoDB 기본 설정 파일
+
 # 구현한 기능들
 ## 이미지 방명록
 ![image](https://github.com/user-attachments/assets/8dbb2b04-12bd-40fc-9ee7-a1ba54ac13b7)
