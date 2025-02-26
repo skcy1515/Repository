@@ -1,4 +1,0 @@
-spring:
-  data:
-    mongodb:
-      uri: mongodb+srv://skcy151515:IyuTp1jwPnkfLXXl@cluster0.es5up.mongodb.net/SpringDatabase?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true
