@@ -55,23 +55,22 @@
         <hr class="my-4"/>
         <a href="/" role="button">돌아가기</a>
         <p></p>
-        <button id="btn-posting-box" class="btn btn-primary btn-lg" type="button">게시글 작성하기</button>
-        <form action="/imageMemo/deleteAll" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-danger btn-lg">전체 삭제</button>
-        </form>
+        <button id="btn-posting-box" class="btn btn-primary btn-lg" type="button"
+                onclick="window.location.href='/postWrite'">게시글 작성하기
+        </button>
     </div>
 
     <div class="list-group" th:each="post: ${postResponses}">
-        <a href="#" class="list-group-item list-group-item-action">
+        <a th:href="@{'/postView/' + ${post.id}}" th:data-id="${post.id}" id="postView"
+           class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1" th:text="${post.title}"></h5>
-                <small th:text="${post.updatedAt}"></small>
+                <small th:text="${#temporals.format(post.updatedAt, 'yyyy-MM-dd HH:mm')}"></small>
             </div>
             <p class="mb-1" th:text="${post.content}"></p>
         </a>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/post.js"></script>
 </body>
 </html>

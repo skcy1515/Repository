@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -42,13 +41,15 @@ public class ImageMemoService {
         }
 
         // 파일명 충돌 방지를 위해 UUID 추가
+        // "uploads/" + UUID + "_" + 원본파일명 형태로 저장됨
         String uniqueFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         String filePath = Paths.get(uploadDir, uniqueFileName).toString();
 
-        // 파일 저장
+        // 서버 디렉토리에 파일 저장
         file.transferTo(new File(filePath));
 
-        // 저장할 파일 경로 추가
+        // MongoDB에 저장할 이미지 경로
+        //예제: /uploads/a1b2c3d4-5678-90ef-test.jpg
         String imageMemo = "/uploads/" + uniqueFileName;
 
         // MongoDB에는 저장된 파일 경로만 저장
@@ -64,11 +65,10 @@ public class ImageMemoService {
     // 스트림 -> ImageMemoEntity 객체를 ImageMemoResponse 객체로 변환
     // new ImageMemoResponse(ImageMemoEntity entity)와 동일
     public List<ImageMemoResponse> getAllImageMemos() {
-        List<ImageMemoEntity> imageMemoEntities = imageMemoRepository.findAll();
-
-        return imageMemoEntities.stream()
-                .map(ImageMemoResponse::new)
-                .collect(Collectors.toList()); // 변환된 ImageMemoResponse 객체들을 다시 리스트로 수집
+        return imageMemoRepository.findAll()
+                .stream()
+                .map(ImageMemoResponse::new) // ImageMemoEntity -> ImageMemoResponse 변환
+                .collect(Collectors.toList());
     }
 
     // 특정 ID의 이미지 삭제
@@ -78,7 +78,7 @@ public class ImageMemoService {
         // 이미지 파일 삭제
         deleteFile(imageMemoEntity.getImage());
 
-        // ✅ DB에서 해당 이미지 데이터 삭제
+        // DB에서 해당 이미지 데이터 삭제
         imageMemoRepository.deleteById(id);
     }
 
@@ -86,7 +86,7 @@ public class ImageMemoService {
     public void deleteAllImageMemos() {
         List<ImageMemoEntity> allImages = imageMemoRepository.findAll();
 
-        // ✅ 모든 파일 삭제
+        // 모든 파일 삭제
         for (ImageMemoEntity image : allImages) {
             deleteFile(image.getImage());
         }
@@ -98,17 +98,18 @@ public class ImageMemoService {
     private void deleteFile(String imagePath) {
         if (imagePath != null && !imagePath.isEmpty()) {
             // 절대 경로 변환
-            String absolutePath = Paths.get(uploadDir, new File(imagePath).getName()).toString();
+            // new File(imagePath).getName() → 파일명만 추출
+            String absolutePath = uploadDir + "/" + new File(imagePath).getName();
             File file = new File(absolutePath);
 
             if (file.exists()) {
                 if (file.delete()) {
-                    System.out.println("🟢 파일 삭제 성공: " + absolutePath);
+                    System.out.println("File deletion successful: " + absolutePath);
                 } else {
-                    System.out.println("🚨 파일 삭제 실패: " + absolutePath);
+                    System.out.println("File deletion failed: " + absolutePath);
                 }
             } else {
-                System.out.println("❌ 파일이 존재하지 않음: " + absolutePath);
+                System.out.println("File does not exist: " + absolutePath);
             }
         }
     }

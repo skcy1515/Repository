@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 @Builder
 @Document(collection = "imageMemo")  // MongoDB의 imageMemo 컬렉션과 연결
 public class ImageMemoEntity {
-        @Id
-        private String id;
-        private String image;
-        private String comment;
-        private LocalDateTime createdAt;
+    @Id
+    private String id;
+    private String image;
+    private String comment;
+    private LocalDateTime createdAt;
 }
