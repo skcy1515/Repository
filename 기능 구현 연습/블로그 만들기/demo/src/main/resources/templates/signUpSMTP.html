@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8"/>
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- 이 부분은 절대 지우지 마세요. -->
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+            integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+            crossorigin="anonymous"
+    />
+    <!-- 이 부분은 절대 지우지 마세요. -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Stylish&display=swap"
+            rel="stylesheet"
+    />
+    <title>Title</title>
+    <style>
+        .container {
+            margin-top: 30px;
+        }
+        
+        #checkEmail {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>회원가입</h1>
+    <form>
+        <div class="form-group">
+            <label for="exampleInputEmail1">이메일 주소</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <button type="button" class="btn btn-primary" id="verify1">인증번호 보내기</button>
+        <p></p>
+        <div class="form-group" id="checkEmail">
+            <label for="text">인증번호</label>
+            <input class="form-control" id="text" name="text">
+            <p></p>
+            <button type="button" class="btn btn-primary" id="verify2">인증</button>
+        </div>
+        <div class="form-group">
+            <label for="text2">닉네임</label>
+            <input type="text" class="form-control" id="text2">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">비밀번호</label>
+            <input type="password" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword2">비밀번호 확인</label>
+            <input type="password" class="form-control" id="exampleInputPassword2">
+        </div>
+        <button type="button" class="btn btn-primary">회원가입</button>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/signUpSMTP.js"></script>
+</body>
+</html>
