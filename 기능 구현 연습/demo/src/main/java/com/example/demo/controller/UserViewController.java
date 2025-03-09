@@ -5,10 +5,7 @@ import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,6 +17,18 @@ public class UserViewController {
     @GetMapping("/signUpSMTP")
     public String signUpSMTP() {
         return "signUpSMTP";
+    }
+
+    // 렌더링
+    @GetMapping("/login")
+    public String signIn() {
+        return "login";
+    }
+
+    // 렌더링
+    @GetMapping("/logout")
+    public String logout() {
+        return "logout";
     }
 
     // 이메일로 인증번호 전송
@@ -43,7 +52,11 @@ public class UserViewController {
     // @RequestBody를 사용하여 JSON 데이터를 받기
     @PostMapping("/registerSMTP")
     public ResponseEntity<String> register(@RequestBody UserRequest userRequest) {
-        userService.saveUser(userRequest.getEmail(), userRequest.getPassword());
-        return ResponseEntity.ok("회원가입이 완료되었습니다.");
+        try {
+            userService.saveUser(userRequest.getEmail(), userRequest.getPassword(), userRequest.getNickname());
+            return ResponseEntity.ok("회원가입이 완료되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage()); // "이미 존재하는 닉네임입니다!" 반환
+        }
     }
 }

@@ -12,7 +12,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: "POST",
-            url: "/send-verification",
+            url: "/public/send-verification",
             data: { email: userEmail },
             success: function (response) {
                 alert("인증번호가 이메일로 전송되었습니다.");
@@ -34,7 +34,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: "POST",
-            url: "/verify-code",
+            url: "/public/verify-code",
             data: { email: userEmail, code: code },
             success: function (response) {
                 alert("이메일 인증이 완료되었습니다!");
@@ -57,6 +57,7 @@ $(document).ready(function () {
             return;
         }
 
+        let nickname = $("#text2").val();
         let password = $("#exampleInputPassword1").val();
         let confirmPassword = $("#exampleInputPassword2").val();
 
@@ -71,15 +72,19 @@ $(document).ready(function () {
 
         $.ajax({
             type: "POST",
-            url: "/registerSMTP",
+            url: "/public/registerSMTP",
             contentType: "application/json",
-            data: JSON.stringify({ email: userEmail, password: password }),
+            data: JSON.stringify({ email: userEmail, password: password, nickname: nickname }),
             success: function (response) {
                 alert("회원가입이 완료되었습니다!");
                 window.location.href = "/signIn";
             },
-            error: function () {
-                alert("회원가입 실패! 다시 시도하세요.");
+            error: function (xhr) {
+                if (xhr.status === 400) {
+                    alert(xhr.responseText); // "이미 존재하는 닉네임입니다!" 메시지 출력
+                } else {
+                    alert("회원가입 실패! 다시 시도하세요.");
+                }
             }
         });
     });

@@ -1,11 +1,14 @@
 package com.example.demo.DTO;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
+@Setter
+@NoArgsConstructor // 기본 생성자 추가
 public class UserRequest {
-    private final String email;
-    private final String password;
+    private String email;
+    private String password;
+    private String nickname;
 }

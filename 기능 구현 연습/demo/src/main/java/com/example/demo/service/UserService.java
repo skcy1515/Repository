@@ -5,10 +5,12 @@ import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -18,6 +20,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
     private final Map<String, String> verificationCodes = new HashMap<>();
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     // 6자리 인증번호 생성
     private String generateVerificationCode() {
@@ -45,10 +48,18 @@ public class UserService {
         return verificationCodes.containsKey(email) && verificationCodes.get(email).equals(code);
     }
 
-    public void saveUser(String email, String password) {
+    // 유저 정보 저장
+    public void saveUser(String email, String password, String nickname) {
+        // 닉네임 중복 검사
+        Optional<UserEntity> existingUser = userRepository.findByNickname(nickname);
+        if (existingUser.isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 닉네임입니다!");
+        }
+
         UserEntity userEntity = UserEntity.builder().
-                password(password).
+                password(bCryptPasswordEncoder.encode(password)).
                 email(email).
+                nickname(nickname).
                 build();
         userRepository.save(userEntity);
     }
