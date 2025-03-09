@@ -1,5 +1,5 @@
-# 기능 구현 연습
-스프링 부트로 웹 기능들을 구현해보았습니다.
+# 블로그 기능 구현
+스프링 부트로 이미지 방명록, 블로그 기능 구현
 
 # 사용한 기술
 - 스프링부트
@@ -51,17 +51,22 @@ file.upload-dir=/home/ubuntu/Tests/uploads/
 ```
 - `application-dev.properties`, `application-prod.properties`: 윈도우, 리눅스 경로 설정
 
-
 # 구현한 기능들
+## 로그인, 회원가입, 로그아웃
+![image](https://github.com/user-attachments/assets/ffd00bf6-58d0-4151-8fa0-cfda1f7d1104)
+
+![image](https://github.com/user-attachments/assets/0a71eb2f-7e40-4fe9-9910-0cfdea550e46)
+
+![image](https://github.com/user-attachments/assets/64fcd22c-bc4d-4e55-bb64-f2f29ce7f29a)
+
+- 로그인, 회원가입, 로그아웃을 할 수 있다.
+- 로그인은 스프링 시큐리티를 사용
+- 회원가입은 자바 이메일 센더를 이용하여 이메일 인증으로 기능
+
 ## 이미지 방명록
 ![image](https://github.com/user-attachments/assets/8dbb2b04-12bd-40fc-9ee7-a1ba54ac13b7)
 
 1개의 이미지 파일과 코멘트를 업로드하여 이미지 방명록을 남길 수 있다.
-
-### 코드
-- `imageMemo.html` : 화면 구현
-- `imageMemo.js` : 입력박스 열기 닫기, 방명록 삭제, 방명록 전체 삭제 기능 처리
-- `ImageMemoEntity, Service, Repository, Request, Response, ViewController` : CRUD 작업 수행
 
 ## 게시글
 ![image](https://github.com/user-attachments/assets/5947b830-e07f-44df-95ea-f4835db76554)
@@ -74,12 +79,7 @@ file.upload-dir=/home/ubuntu/Tests/uploads/
 
 게시글을 조회, 작성, 수정, 삭제를 할 수 있다.
 
-### 코드
-- `post.html` : 게시글 메인 화면 (전체조회) 구현
-- `postView.html` : postId를 통한 특정 게시글 조회 화면 구현
-- `postWrite.html` : 게시글 작성 화면 구현
-- `postEdit.html` : postId를 통한 특정 게시글 수정 화면 구현
-- `postView.js` : postId를 통한 특정 게시글의 정보를 가져옴, 게시글 삭제 기능 처리
-- `postWrite.js` : 파일 업로드와 파일 목록 업데이트, 게시글 작성 기능 처리
-- `postEdit.js` : postId를 통한 특정 게시글의 정보를 가져옴, 기존 업로드된 파일을 가져오면서 파일 목록 업데이트, 게시글 수정 기능 처리
-- `PostEntity, Service, Repository, Request, Response, ViewController` : CRUD 작업 수행
+## 댓글
+![image](https://github.com/user-attachments/assets/dd004cf2-e008-4558-b87c-61cd9d8ec996)
+
+댓글을 조회, 작성, 삭제할 수 있다.
