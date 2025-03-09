@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
@@ -58,6 +58,15 @@
         <h1 class="display-4">유용한 사이트 모음</h1>
         <p class="lead">원하시는 사이트를 클릭해주세요!</p>
         <hr class="my-4" />
+
+        <!-- 로그인 여부 체크 후 로그아웃 버튼 추가 -->
+        <div sec:authorize="isAuthenticated()">
+            <form action="/logout" method="post" style="margin-top: 10px;">
+                <button type="submit" class="btn btn-danger">로그아웃</button>
+            </form>
+        </div>
+        <p></p>
+
         <a href="/getAllImageMemo" role="button">이미지 방명록 남기기</a>
         <p></p>
         <a href="/getAllPosts" role="button">게시글 남기기</a>
