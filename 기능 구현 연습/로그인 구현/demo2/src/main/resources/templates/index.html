@@ -18,13 +18,14 @@
 
         // 로그아웃 버튼 클릭 시 로컬 스토리지 초기화 및 로그인 페이지로 이동
         $('#logoutButton').click(function() {
-            localStorage.removeItem('accessToken');
             // 서버에 로그아웃 요청
             $.ajax({
-                url: '/logout',  // 서버의 로그아웃 API 엔드포인트
+                url: '/api/logout',  // 서버의 로그아웃 API 엔드포인트
+                headers: { 'Authorization': 'Bearer ' + accessToken },
                 method: 'POST',
                 success: function(response) {
-                    alert("로그아웃 되었습니다");
+                    alert(response);
+                    localStorage.removeItem('accessToken');
                     window.location.href = '/login';
                 },
                 error: function() {
@@ -44,13 +45,8 @@
             },
             error: function(xhr) {
                 if (xhr.status === 403) { // 403 오류일 경우
-                    var refreshToken = localStorage.getItem('refreshToken');
                     console.log("엑세스 토큰 만료로 다시 받습니다.")
-                    if (refreshToken) {
-                        refreshAccessToken(refreshToken); // 리프레시 토큰으로 액세스 토큰 갱신
-                    } else {
-                        redirectToLogin();
-                    }
+                    refreshAccessToken(); // 리프레시 토큰으로 액세스 토큰 갱신
                 } else {
                     alert("콘텐츠를 불러오지 못했습니다.");
                 }
@@ -58,12 +54,11 @@
         });
     }
 
-    function refreshAccessToken(refreshToken) {
+    function refreshAccessToken() {
         $.ajax({
             url: '/refreshToken', // 리프레시 토큰으로 액세스 토큰 갱신 요청
             method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ refreshToken: refreshToken }),
             success: function(response) {
                 // 새로 발급받은 액세스 토큰 저장
                 localStorage.setItem('accessToken', response.accessToken);

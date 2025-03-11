@@ -66,7 +66,7 @@ public class AuthController {
     }
 
     // 로그아웃
-    @PostMapping("/logout")
+    @PostMapping("/api/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
         // 쿠키 삭제: 'refreshToken' 쿠키를 만료시킨다.
         Cookie cookie = new Cookie("refreshToken", null);  // 값은 null로 설정
