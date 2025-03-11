@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>홈 페이지</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>홈 페이지</h1>
+<div id="content">로딩 중...</div>
+<p></p>
+<button id="logoutButton">로그아웃</button>
+
+<script>
+    $(document).ready(function() {
+        var accessToken = localStorage.getItem('accessToken');
+        loadProtectedContent(accessToken)
+
+        // 로그아웃 버튼 클릭 시 로컬 스토리지 초기화 및 로그인 페이지로 이동
+        $('#logoutButton').click(function() {
+            localStorage.removeItem('accessToken');
+            // 서버에 로그아웃 요청
+            $.ajax({
+                url: '/logout',  // 서버의 로그아웃 API 엔드포인트
+                method: 'POST',
+                success: function(response) {
+                    alert("로그아웃 되었습니다");
+                    window.location.href = '/login';
+                },
+                error: function() {
+                    window.location.href = '/login';
+                }
+            });
+        });
+    });
+
+    function loadProtectedContent(accessToken) {
+        $.ajax({
+            url: '/api/test',
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + accessToken },
+            success: function(response) {
+                $('#content').text(response);
+            },
+            error: function(xhr) {
+                if (xhr.status === 403) { // 403 오류일 경우
+                    var refreshToken = localStorage.getItem('refreshToken');
+                    console.log("엑세스 토큰 만료로 다시 받습니다.")
+                    if (refreshToken) {
+                        refreshAccessToken(refreshToken); // 리프레시 토큰으로 액세스 토큰 갱신
+                    } else {
+                        redirectToLogin();
+                    }
+                } else {
+                    alert("콘텐츠를 불러오지 못했습니다.");
+                }
+            }
+        });
+    }
+
+    function refreshAccessToken(refreshToken) {
+        $.ajax({
+            url: '/refreshToken', // 리프레시 토큰으로 액세스 토큰 갱신 요청
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ refreshToken: refreshToken }),
+            success: function(response) {
+                // 새로 발급받은 액세스 토큰 저장
+                localStorage.setItem('accessToken', response.accessToken);
+                loadProtectedContent(response.accessToken); // 다시 콘텐츠 요청
+            },
+            error: function() {
+                alert("리프레시 토큰 만료");
+                redirectToLogin();
+            }
+        });
+    }
+
+    function redirectToLogin() {
+        alert("로그인이 필요합니다.");
+        window.location.href = '/login';
+    }
+</script>
+</body>
+</html>
+

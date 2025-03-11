@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 페이지</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .login-container h2 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .form-group input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .error-message {
+            color: red;
+            font-size: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h2>로그인</h2>
+    <div class="error-message" id="error-message">이메일 또는 비밀번호가 잘못되었습니다.</div>
+    <form id="login-form">
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="로그인">
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#login-form').on('submit', function(e) {
+            e.preventDefault(); // 기본 폼 제출 방지
+
+            var email = $('#email').val();
+            var password = $('#password').val();
+
+            // 로그인 요청
+            $.ajax({
+                url: '/login',  // 서버의 로그인 API URL
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    email: email,
+                    password: password
+                }),
+                success: function(response) {
+                    localStorage.setItem('accessToken', response.accessToken);  // 액세스 토큰 저장
+                    window.location.href = '/';  // 로그인 후 대시보드로 이동
+                },
+                error: function(xhr, status, error) {
+                    // 로그인 실패 시, 오류 메시지를 표시합니다.
+                    $('#error-message').show();
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
