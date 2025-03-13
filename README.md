@@ -6,7 +6,7 @@
 $ git init // 로컬 저장소 생성
 $ git remote add origin [원격저장소 주소] // 원격 저장소와 연결
 $ git branch -m master main // 브랜치 이름 바꾸기
-$ git branch -b [브랜치 이름] // 브랜치 만들기
+$ git branch [브랜치 이름] // 브랜치 만들기
 $ git checkout 브랜치이름 // 브랜치로 이동하기
 $ git add 파일명 // 파일 추가
 $ git add . // 파일 전체 추가
