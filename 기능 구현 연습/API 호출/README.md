@@ -7,10 +7,11 @@
 implementation 'org.springframework.boot:spring-boot-starter-webflux'
 ```
 
+### application.properties
 ```
 api.serviceKey=YOUR_SERVICE_KEY
 ```
-application.properties
+
 
 ## 구현한 기능
 ```
