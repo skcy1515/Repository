@@ -1,6 +1,8 @@
 # 블로그 기능 구현
 스프링 부트로 이미지 방명록, 블로그 기능 구현
 
+[코드](https://github.com/skcy1515/Repository/tree/main/%EA%B8%B0%EB%8A%A5%20%EA%B5%AC%ED%98%84%20%EC%97%B0%EC%8A%B5/%EB%B8%94%EB%A1%9C%EA%B7%B8%20%EB%A7%8C%EB%93%A4%EA%B8%B0/demo/src/main/java/com/example/demo)
+
 # 사용한 기술
 - 스프링부트
 - 타임리프
