@@ -21,12 +21,11 @@ public class ApiResponse {
         @Getter
         @AllArgsConstructor
         public static class Item {
-            private String entpName;
-            private String itemName;
-            private String efcyQesitm;
-            private String useMethodQesitm;
-            private String atpnQesitm;
-            private String depositMethodQesitm;
+            private String itemName; // 제품명
+            private String efcyQesitm; // 효능
+            private String useMethodQesitm; // 사용법
+            private String atpnQesitm; // 주의사항
+            private String seQesitm; // 부작용
         }
     }
 }
