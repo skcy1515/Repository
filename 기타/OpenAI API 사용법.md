@@ -1,21 +1,20 @@
-# OpenAI API 사이트 가입, API 키 생성, 결제
-https://platform.openai.com/docs/overview
+# OpenAPI 사용하는 법
+https://platform.openai.com/docs/overview 
 
-사이트에 들어가서 가입을 해주고
+![image](https://github.com/user-attachments/assets/d4b29f40-54b2-42b2-83f6-e039fc6ab2a0)
 
-https://platform.openai.com/settings/organization/billing/overview
+openapi 사이트에 들어가서 가입을 해주고, API 키를 생성해준다. API 키는 다시 확인할 수 없으므로, 따로 저장해두셔야 한다.
 
-API를 사용하기 위해 요금을 결제한다
+![image](https://github.com/user-attachments/assets/eb74a280-3b4a-484e-826c-41cb27e16314)
 
-![image](https://github.com/user-attachments/assets/7ceebd85-fcaf-4d15-9baa-de0e73840e50)
-
-이후 API키를 생성하고 저장해둔다.
+(API 키를 생성하고 사용하기 위해서는, 결제를 해야한다.)
 
 # 파인튜닝 사용법 (파이썬)
 ```
 pip install openai
+pip install python-dotenv
 ```
-필수 패키지 설치
+필수 패키지 설치 (환경변수까지)
 
 ```
 {"messages": [{"role": "system", "content": "약사처럼 친절하고 이해하기 쉽게 대답해줘."}, {"role": "user", "content": "이 약은 식욕감퇴(식욕부진), 위부팽만감, 소화불량, 과식, 체함, 구역, 구토에 사용합니다."}, {"role": "assistant", "content": "이 약은 식욕감퇴, 소화불량, 과식, 체함, 구역, 구토 증상에 사용돼요."}]}
@@ -33,16 +32,27 @@ pip install openai
 
 ```
 from openai import OpenAI
+from dotenv import load_dotenv
+import os
 
+# .env 파일 로드
+load_dotenv()
+
+# 환경변수 읽기
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+# OpenAI API를 사용할 클라이언트 객체를 생성하고, 발급받은 API 키를 넣어서 인증
 client = OpenAI(
-    api_key = "서비스키"
+    api_key = openai_api_key
 )
 
+# 학습시킬jsonl.jsonl 파일을 OpenAI 서버에 업로드함, 파일 목적은 파인튜닝 학습용으로 지정
 file = client.files.create(
   file=open("학습시킬jsonl.jsonl", "rb"),
   purpose="fine-tune"
 )
 
+# 방금 업로드한 파일을 이용해 파인튜닝 학습을 시작, model="gpt-3.5-turbo"는 기반 모델로 GPT-3.5-turbo를 사용하겠다는 뜻
 client.fine_tuning.jobs.create(
   training_file=file.id,
   model="gpt-3.5-turbo"
@@ -50,11 +60,55 @@ client.fine_tuning.jobs.create(
 ```
 이후 코드를 실행시킨 후
 
-https://platform.openai.com/finetune/ftjob-A4DFm6Kod1LoJO70JlT4bGws?filter=all
+![image](https://github.com/user-attachments/assets/242d92cd-c55d-4102-9b22-b3cf3cccf3f1)
 
 파인튜닝 탭에서 파인튜닝이 완료될 때까지 기다리고, Output model명을 복사해서 사용한다.
 
 ```
+from flask import Flask, request, jsonify
+from pymongo import MongoClient
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
+
+# .env 파일 로드
+load_dotenv()
+
+# 환경변수에서 값 읽기
+openai_api_key = os.environ.get("OPENAI_API_KEY")
+mongo_uri = os.environ.get("MONGODB_URI")
+
+client = OpenAI(
+    api_key = openai_api_key
+)
+
+app = Flask(__name__)
+
+# MongoDB 연결
+mongo_client = MongoClient(mongo_uri)
+db = mongo_client['SpringDatabaseApi']
+collection = db['Api']
+
+@app.route('/medicine/summary', methods=['POST'])
+def summarize_medicine():
+    data = request.get_json()
+    query = data.get("query", "")
+
+    if not query:
+        return jsonify({"error": "query 파라미터가 필요합니다."}), 400
+
+    # 1. 제품명 또는 효능에서 검색
+    result = collection.find_one({
+        "$or": [
+            {"itemName": {"$regex": query, "$options": "i"}},
+            {"efcyQesitm": {"$regex": query, "$options": "i"}}
+        ]
+    })
+
+    if not result:
+        return jsonify({"error": "관련 약을 찾을 수 없습니다."}), 404
+
+    # 2. 필요한 정보 추출
     item_name = result.get("itemName", "")
     effect = result.get("efcyQesitm", "")
     usage = result.get("useMethodQesitm", "")
@@ -68,9 +122,9 @@ https://platform.openai.com/finetune/ftjob-A4DFm6Kod1LoJO70JlT4bGws?filter=all
 
     # 3. OpenAI에 요약 요청
     response =  client.chat.completions.create(
-        model="ft:gpt-3.5-turbo-0125:personal::모델명",
+        model="ft:gpt-3.5-turbo-0125:personal::BFDFfQvI",
         messages=[
-            {"role": "system", "content": "Act like a pharmacist and explain the medicine clearly in English."},
+            {"role": "system", "content": "약사처럼 친절하고 이해하기 쉽게 대답해줘."},
             {"role": "user", "content": f"{context_text}"}
         ]
     )
@@ -80,5 +134,11 @@ https://platform.openai.com/finetune/ftjob-A4DFm6Kod1LoJO70JlT4bGws?filter=all
         "itemName": item_name,
         "summary": summary
     })
+
+
+if __name__ == '__main__':
+    app.run('0.0.0.0', port=5000, debug=False)
 ```
+![image](https://github.com/user-attachments/assets/ea3255fd-8ae4-4f9d-adc4-d3db4d76f399)
+
 예시 코드
