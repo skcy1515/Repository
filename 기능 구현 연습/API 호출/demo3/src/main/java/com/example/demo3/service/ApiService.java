@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
@@ -23,8 +22,8 @@ public class ApiService {
     @Value("${api.serviceKey}")
     private String serviceKey; // application.properties에 설정된 서비스 키 값을 주입받음
 
-    public ApiService(WebClient.Builder webClientBuilder, ApiRepository apiRepository) {
-        this.webClient = webClientBuilder
+    public ApiService(ApiRepository apiRepository) {
+        this.webClient = WebClient.builder()
                 .exchangeStrategies(ExchangeStrategies.builder()
                         .codecs(configurer -> configurer
                                 .defaultCodecs()
