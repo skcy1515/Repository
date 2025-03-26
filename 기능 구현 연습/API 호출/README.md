@@ -13,7 +13,6 @@ implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reacti
 api.serviceKey=YOUR_SERVICE_KEY
 ```
 
-
 ## 구현한 기능
 ```
 <response>
@@ -111,6 +110,9 @@ public class ApiResponse {
 }
 ```
 ApiResponse 클래스는 공공 API로부터 받은 JSON 응답 데이터를 자바 객체로 매핑하기 위해 사용하는 DTO(Data Transfer Object)다. 즉, WebClient를 통해 응답받은 JSON 구조를 자바에서 쉽게 다룰 수 있도록 구조화한 클래스다. 이를 통해 items 리스트에서 필요한 필드만(itemName, efcyQesitm, 등) 꺼내서 사용할 수 있게 된다.
+
+### 왜 구조를 중첩해서 썼는가?
+공공 API 응답이 중첩 구조이기 때문에 그걸 그대로 반영한 것. `ApiResponse` → `Body` → `Item`으로 내려가는 구조는 JSON 응답의 계층을 반영한 것이고, Jackson 라이브러리 (Spring 내부적으로 사용)가 이 구조를 기준으로 파싱한다.
 
 ## ApiService
 ```
