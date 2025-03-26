@@ -13,7 +13,7 @@ API를 사용하기 위해 요금을 결제한다
 
 # 파인튜닝 사용법 (파이썬)
 ```
-pip install flask openai
+pip install openai
 ```
 필수 패키지 설치
 
@@ -32,14 +32,11 @@ pip install flask openai
 학습 시킬 jsonl 파일 만들기
 
 ```
-from flask import Flask
 from openai import OpenAI
 
 client = OpenAI(
     api_key = "서비스키"
 )
-
-app = Flask(__name__)
 
 file = client.files.create(
   file=open("학습시킬jsonl.jsonl", "rb"),
@@ -50,9 +47,6 @@ client.fine_tuning.jobs.create(
   training_file=file.id,
   model="gpt-3.5-turbo"
 )
-
-if __name__ == '__main__':
-    app.run('0.0.0.0', port=5000, debug=False)
 ```
 이후 코드를 실행시킨 후
 
