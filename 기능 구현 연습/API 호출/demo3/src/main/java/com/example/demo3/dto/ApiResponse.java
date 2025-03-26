@@ -25,7 +25,6 @@ public class ApiResponse {
             private String efcyQesitm; // 효능
             private String useMethodQesitm; // 사용법
             private String atpnQesitm; // 주의사항
-            private String seQesitm; // 부작용
         }
     }
 }

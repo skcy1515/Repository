@@ -65,7 +65,6 @@ public class ApiService {
                                     .efcyQesitm(item.getEfcyQesitm())
                                     .useMethodQesitm(item.getUseMethodQesitm())
                                     .atpnQesitm(item.getAtpnQesitm())
-                                    .seQesitm(item.getSeQesitm())
                                     .build())
                             .toList();
 
