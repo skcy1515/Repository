@@ -42,6 +42,7 @@ api.serviceKey=YOUR_SERVICE_KEY
                 <itemImage/>
                 <bizrno>1108100102</bizrno>
             </item>
+...
 ```
 기존 http://apis.data.go.kr/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList?serviceKey=서비스키 들어가서 나오는 내용들을 JSON으로 원하는 값만 가져올 수 있음
 
@@ -81,18 +82,6 @@ api.serviceKey=YOUR_SERVICE_KEY
 }
 ```
 # 코드
-## WebClientConfig
-```
-@Configuration
-public class WebClientConfig {
-
-    @Bean
-    public WebClient.Builder webClientBuilder() {
-        return WebClient.builder(); // WebClient 빌더를 빈으로 등록
-    }
-}
-```
-
 ## ApiResponse
 ```
 @Getter
@@ -121,6 +110,8 @@ public class ApiResponse {
     }
 }
 ```
+ApiResponse 클래스는 공공 API로부터 받은 JSON 응답 데이터를 자바 객체로 매핑하기 위해 사용하는 DTO(Data Transfer Object)다. 즉, WebClient를 통해 응답받은 JSON 구조를 자바에서 쉽게 다룰 수 있도록 구조화한 클래스다. 이를 통해 items 리스트에서 필요한 필드만(itemName, efcyQesitm, 등) 꺼내서 사용할 수 있게 된다.
+
 ## ApiService
 ```
 @Service
@@ -132,8 +123,8 @@ public class ApiService {
     @Value("${api.serviceKey}")
     private String serviceKey; // application.properties에 설정된 서비스 키 값을 주입받음
 
-    public ApiService(WebClient.Builder webClientBuilder, ApiRepository apiRepository) {
-        this.webClient = webClientBuilder
+    public ApiService(ApiRepository apiRepository) {
+        this.webClient = WebClient.builder()
                 .exchangeStrategies(ExchangeStrategies.builder()
                         .codecs(configurer -> configurer
                                 .defaultCodecs()
@@ -174,7 +165,6 @@ public class ApiService {
                                     .efcyQesitm(item.getEfcyQesitm())
                                     .useMethodQesitm(item.getUseMethodQesitm())
                                     .atpnQesitm(item.getAtpnQesitm())
-                                    .seQesitm(item.getSeQesitm())
                                     .build())
                             .toList();
 
