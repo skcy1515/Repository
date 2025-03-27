@@ -1,11 +1,11 @@
 # OpenAPI 사용하는 법
 https://platform.openai.com/docs/overview 
 
-![image](https://github.com/user-attachments/assets/d4b29f40-54b2-42b2-83f6-e039fc6ab2a0)
+![image](https://github.com/user-attachments/assets/4e9112d3-bf18-445e-8344-ae3603747668)
 
-openapi 사이트에 들어가서 가입을 해주고, API 키를 생성해준다. API 키는 다시 확인할 수 없으므로, 따로 저장해두셔야 한다.
+openapi 사이트에 들어가서 가입을 해주고, API 키를 생성해준다. API 키는 다시 확인할 수 없으므로, 따로 저장해야 한다.
 
-![image](https://github.com/user-attachments/assets/eb74a280-3b4a-484e-826c-41cb27e16314)
+![image](https://github.com/user-attachments/assets/bafed4e7-f9c1-4130-af9a-230968a92dd4)
 
 (API 키를 생성하고 사용하기 위해서는, 결제를 해야한다.)
 
@@ -60,7 +60,7 @@ client.fine_tuning.jobs.create(
 ```
 이후 코드를 실행시킨 후
 
-![image](https://github.com/user-attachments/assets/242d92cd-c55d-4102-9b22-b3cf3cccf3f1)
+![image](https://github.com/user-attachments/assets/9dcb4e7f-3ee7-4637-a5a7-fcfebb20a376)
 
 파인튜닝 탭에서 파인튜닝이 완료될 때까지 기다리고, Output model명을 복사해서 사용한다.
 
@@ -139,6 +139,6 @@ def summarize_medicine():
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=False)
 ```
-![image](https://github.com/user-attachments/assets/ea3255fd-8ae4-4f9d-adc4-d3db4d76f399)
+![image](https://github.com/user-attachments/assets/340aba06-84dd-4abb-b3c4-1422eb660d4f)
 
 예시 코드
