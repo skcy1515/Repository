@@ -19,13 +19,14 @@ app = Flask(__name__)
 
 # MongoDB 연결
 mongo_client = MongoClient(mongo_uri)
-db = mongo_client['SpringDatabaseApi']
+db = mongo_client['K_Medi_Guide']
 collection = db['Api']
 
 @app.route('/medicine/summary', methods=['POST'])
 def summarize_medicine():
     data = request.get_json()
     query = data.get("query", "")
+    print("받은 데이터:", data)
 
     if not query:
         return jsonify({"error": "query 파라미터가 필요합니다."}), 400
